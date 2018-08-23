@@ -17,28 +17,43 @@ Created on Sun Aug 19 22:59:04 2018
 import scipy.misc
 import numpy as np
 
+def plot_traj(data,par,noshow):
+    ''' Plot trajectory in data frame format'''
+    x = data['longitude']
+    y = data['latitude']
+    xmin,xmax = min(x),max(x)
+    ymin,ymax = min(y),max(y)
+    fig = plt.figure()
+    xrange,yrange = xmax-xmin,ymax-ymin
+    plt.axis([xmin-0.01*xrange, xmax+0.01*xrange, ymin-0.01*yrange, ymax+0.01*yrange])
+    if(par==1):
+        plt.scatter(x,y)
+    else:
+        plt.plot(x,y)
+    if(noshow==0): plt.show()
+    return(fig)
+
+
+a = fractal_dimension(K, 0.5)
 p = plot_traj(taxi_999_traj,1)
 
-def fractal_dimension(Z, threshold=0.2):
-
-    # Only for 2d image
-    # assert(len(Z.shape) == 2)
-
-    # From https://github.com/rougier/numpy-100 (#87)
-    def boxcount(Z, k):
+def hausdorff_fractal_dimension(traj, threshold=0.2):
+    ''' Compute the fractal dimension of a trajectory'''
+  
+    def boxcount(traj, k):
         S = np.add.reduceat(
-            np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),
-                               np.arange(0, Z.shape[1], k), axis=1)
+            np.add.reduceat(traj, np.arange(0, traj.shape[0], k), axis=0),
+                               np.arange(0, traj.shape[1], k), axis=1)
 
         # We count non-empty boxes
         return len(np.where((S > 0))[0] & (S < k*k)[0])
 
 
     # Transform Z into a binary array
-    Z = (Z < threshold)
+    traj = (traj < threshold)
 
     # Minimal dimension of image
-    p =Z.shape[0]
+    p =traj.shape[0]
 
     # Greatest power of 2 less than or equal to p
     n = 2**np.floor(np.log(p)/np.log(2))
@@ -78,9 +93,7 @@ for idx,tr in enumerate(trajectories_20):
     #p.savefig(picname)
    # I = plt.imread(picname)/sizes[0]
    # if(np.isnan(I).any()=='False'):
-    H,xedges,yedges = np.histogram2d(tr['latitude'].values, tr['longitude'].values)
-    H2 = H/16
-    frac_dims[idx] = fractal_dimension(H2,threshold=0.9)
+   
     
 
 #%% PLOTTING
