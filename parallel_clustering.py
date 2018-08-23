@@ -88,11 +88,10 @@ def saveFileInfo(ifexists,data_list_json,dataname,dumpneeded):
     
     settings = a.produceConfigs() # all clustering settings to test out
     maxidx = 20
-    filenames =[None]*maxidx*len(settings)
-    outnames =[None]*maxidx*len(settings)
-    trajectory_list =[None]*maxidx*len(settings)
-    cluster_list =[None]*maxidx*len(settings)
-    
+    filenames =[0]*maxidx*len(settings)
+   # outnames =[0]*maxidx*len(settings)
+    #trajectory_list =[0]*maxidx*len(settings)
+    #cluster_list =[0]*maxidx*len(settings)
     multiplier = np.floor(len(data_list_json)/maxidx)
     for idx in range(0,maxidx): # chuncking into files for testing
     # ,"trajectories":cc}
@@ -101,18 +100,19 @@ def saveFileInfo(ifexists,data_list_json,dataname,dumpneeded):
         for setidx,se in enumerate(settings):
             se['trajectories']=sub_prepared # add the file to the setting dictionary
             param_and_traj = se
-            # filenames for clustering
+            # filenames for clusteringa
             filename = 'input'+str(idx)+'setting'+str(setidx)+'.txt'
             filenames[idx] = filename
-            outnames[idx] =  'out'+str(idx)+'setting'+str(setidx)+'.txt'
-            trajectory_list[idx] = 'trajectories'+str(idx)+'setting'+str(setidx)+'.txt'
-            cluster_list[idx] = 'clusters'+str(idx)+'setting'+str(setidx)+'.txt'
+           # outnames[idx] =  'out'+str(idx)+'setting'+str(setidx)+'.txt'
+           # trajectory_list[idx] = 'trajectories'+str(idx)+'setting'+str(setidx)+'.txt'
+           # cluster_list[idx] = 'clusters'+str(idx)+'setting'+str(setidx)+'.txt'
             
             fullpath = 'testdata/'+ filename
             if (dumpneeded ==1):
                 with open(fullpath, 'wb') as f:
                     json.dump(param_and_traj, codecs.getwriter('utf-8')(f), ensure_ascii=False)
-        return(filenames,outnames,trajectory_list,cluster_list)
+    filenames,outnames,trajectory_list,cluster_list = a.giveFilenames(settings)
+    return(filenames,outnames,trajectory_list,cluster_list)
 
 def doClustering(filenames):
 
